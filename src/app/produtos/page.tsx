@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { computeRecipeCost, getCurrentIngredientPriceMap } from "@/lib/pricing";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 
 export default async function ProdutosPage() {
   const [products, priceMap] = await Promise.all([
@@ -39,44 +39,41 @@ export default async function ProdutosPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900">
+          <h1 className="text-2xl font-semibold text-[#14162e]">
             Produtos &amp; fichas técnicas
           </h1>
           <p className="text-sm text-zinc-500">
             CMV e margem calculados a partir do preço atual dos ingredientes.
           </p>
         </div>
-        <Link
-          href="/produtos/novo"
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-        >
+        <Link href="/produtos/novo" className="onn-btn-primary">
           Novo produto
         </Link>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      <div className="onn-card overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 text-left text-zinc-500">
+          <thead className="text-left text-zinc-400">
             <tr>
-              <th className="px-4 py-2">Produto</th>
-              <th className="px-4 py-2">Preço</th>
-              <th className="px-4 py-2">CMV</th>
-              <th className="px-4 py-2">Margem</th>
-              <th className="px-4 py-2"></th>
+              <th className="px-5 py-3 font-medium">Produto</th>
+              <th className="px-5 py-3 font-medium">Preço</th>
+              <th className="px-5 py-3 font-medium">CMV</th>
+              <th className="px-5 py-3 font-medium">Margem</th>
+              <th className="px-5 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {rows.map(({ product, cost }) => (
               <tr key={product.id} className="border-t border-zinc-100">
-                <td className="px-4 py-3 font-medium text-zinc-900">
+                <td className="px-5 py-3.5 font-medium text-[#14162e]">
                   {product.name}
-                  <div className="text-xs text-zinc-400">{product.sku}</div>
+                  <div className="text-xs font-normal text-zinc-400">{product.sku}</div>
                 </td>
-                <td className="px-4 py-3">{formatCurrency(Number(product.price))}</td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-3.5 text-zinc-600">{formatCurrency(Number(product.price))}</td>
+                <td className="px-5 py-3.5 text-zinc-600">
                   {cost ? formatCurrency(cost.cmv) : "sem ficha técnica"}
                   {cost && cost.missingPrices.length > 0 && (
                     <div className="text-xs text-amber-600">
@@ -84,12 +81,15 @@ export default async function ProdutosPage() {
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-3.5">
                   {cost ? (
                     <span
-                      className={
-                        cost.margin >= 0 ? "text-emerald-600" : "text-red-600"
-                      }
+                      className={cn(
+                        "rounded-full px-2.5 py-1 text-xs font-medium",
+                        cost.margin >= 0
+                          ? "bg-[#E1F34C]/40 text-[#4b5400]"
+                          : "bg-red-50 text-red-600"
+                      )}
                     >
                       {formatCurrency(cost.margin)} ({cost.marginPercent.toFixed(0)}%)
                     </span>
@@ -97,10 +97,10 @@ export default async function ProdutosPage() {
                     "—"
                   )}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-5 py-3.5 text-right">
                   <Link
                     href={`/produtos/${product.id}`}
-                    className="text-zinc-500 hover:text-zinc-900"
+                    className="text-zinc-400 hover:text-onn-primary"
                   >
                     editar
                   </Link>
@@ -109,7 +109,7 @@ export default async function ProdutosPage() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-zinc-400">
+                <td colSpan={5} className="px-5 py-8 text-center text-zinc-400">
                   Nenhum produto cadastrado ainda.
                 </td>
               </tr>

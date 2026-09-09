@@ -105,12 +105,9 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Nova tarefa..."
-          className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="input flex-1"
         />
-        <button
-          type="submit"
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-        >
+        <button type="submit" className="onn-btn-primary">
           Adicionar
         </button>
       </form>
@@ -172,14 +169,15 @@ function SortableTaskRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-3 py-2",
-        isDragging && "opacity-60"
+        "flex items-center gap-2 rounded-xl border border-zinc-100 bg-zinc-50/60 px-3 py-2.5 transition-colors",
+        task.status === "DONE" && "bg-transparent",
+        isDragging && "opacity-60 shadow-md"
       )}
     >
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab text-zinc-400 hover:text-zinc-600"
+        className="cursor-grab text-zinc-300 hover:text-zinc-500"
         aria-label="Arrastar"
       >
         <GripVertical size={16} />
@@ -188,7 +186,7 @@ function SortableTaskRow({
         type="checkbox"
         checked={task.status === "DONE"}
         onChange={() => onToggle(task.id, task.status)}
-        className="h-4 w-4"
+        className="h-4 w-4 rounded border-zinc-300 text-onn-primary accent-onn-primary focus:ring-onn-primary/30"
       />
       {isEditing ? (
         <input
@@ -202,13 +200,13 @@ function SortableTaskRow({
           onKeyDown={(e) => {
             if (e.key === "Enter") e.currentTarget.blur();
           }}
-          className="flex-1 rounded border border-zinc-300 px-2 py-1 text-sm outline-none"
+          className="input flex-1 py-1"
         />
       ) : (
         <span
           onClick={() => setIsEditing(true)}
           className={cn(
-            "flex-1 cursor-text text-sm text-zinc-800",
+            "flex-1 cursor-text text-sm text-[#14162e]",
             task.status === "DONE" && "text-zinc-400 line-through"
           )}
         >
@@ -217,7 +215,7 @@ function SortableTaskRow({
       )}
       <button
         onClick={() => onDelete(task.id)}
-        className="text-zinc-400 hover:text-red-600"
+        className="text-zinc-300 hover:text-red-600"
         aria-label="Excluir"
       >
         <Trash2 size={16} />

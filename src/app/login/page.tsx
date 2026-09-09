@@ -2,9 +2,12 @@ import { LoginForm } from "@/components/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-lg font-semibold text-zinc-900">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="onn-card w-full max-w-sm p-8">
+        <span className="mb-4 inline-block rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-[#14162e]">
+          ONN
+        </span>
+        <h1 className="mb-1 text-lg font-semibold text-[#14162e]">
           ONN Real Food
         </h1>
         <p className="mb-6 text-sm text-zinc-500">

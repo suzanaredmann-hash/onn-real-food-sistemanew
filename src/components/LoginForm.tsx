@@ -45,7 +45,7 @@ export function LoginForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="input"
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -61,14 +61,14 @@ export function LoginForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="input"
         />
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className="onn-btn-primary mt-2"
       >
         {isSubmitting ? "Entrando..." : "Entrar"}
       </button>

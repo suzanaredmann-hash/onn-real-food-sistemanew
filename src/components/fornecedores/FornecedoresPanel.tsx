@@ -64,16 +64,22 @@ export function FornecedoresPanel({
               (a, b) => a.pricePerUnit - b.pricePerUnit
             );
             return (
-              <div key={ingredient.id} className="rounded-md border border-zinc-200 p-3">
-                <p className="mb-1 text-sm font-medium text-zinc-800">{ingredient.name}</p>
+              <div key={ingredient.id} className="onn-card p-4">
+                <p className="mb-2 text-sm font-medium text-[#14162e]">{ingredient.name}</p>
                 {rows.length === 0 ? (
                   <p className="text-sm text-zinc-400">Sem cotação registrada.</p>
                 ) : (
-                  <ul className="text-sm text-zinc-600">
+                  <ul className="flex flex-col gap-1 text-sm text-zinc-600">
                     {rows.map((row, i) => (
-                      <li key={row.id} className={i === 0 ? "font-medium text-emerald-600" : ""}>
-                        {row.supplierName}: {formatCurrency(row.pricePerUnit)}/{unitLabels[row.unit]}
-                        {i === 0 && " (melhor preço)"}
+                      <li key={row.id} className="flex items-center gap-2">
+                        <span className={i === 0 ? "font-medium text-[#14162e]" : ""}>
+                          {row.supplierName}: {formatCurrency(row.pricePerUnit)}/{unitLabels[row.unit]}
+                        </span>
+                        {i === 0 && (
+                          <span className="rounded-full bg-[#E1F34C]/50 px-2 py-0.5 text-xs font-medium text-[#4b5400]">
+                            melhor preço
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -96,7 +102,7 @@ export function FornecedoresPanel({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold text-zinc-900">{title}</h2>
+      <h2 className="mb-3 text-sm font-semibold text-[#14162e]">{title}</h2>
       {children}
     </section>
   );
@@ -107,7 +113,7 @@ function SupplierTable({ suppliers }: { suppliers: Supplier[] }) {
     return <p className="mb-3 text-sm text-zinc-400">Nenhum fornecedor ainda.</p>;
   }
   return (
-    <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-white">
+    <div className="onn-card mb-3 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-zinc-50 text-left text-zinc-500">
           <tr>
@@ -120,7 +126,7 @@ function SupplierTable({ suppliers }: { suppliers: Supplier[] }) {
         <tbody>
           {suppliers.map((s) => (
             <tr key={s.id} className="border-t border-zinc-100">
-              <td className="px-4 py-2 font-medium text-zinc-900">{s.name}</td>
+              <td className="px-4 py-2 font-medium text-[#14162e]">{s.name}</td>
               <td className="px-4 py-2">{s.contactName ?? "—"}</td>
               <td className="px-4 py-2">{s.phone ?? "—"}</td>
               <td className="px-4 py-2">{s.email ?? "—"}</td>
@@ -160,7 +166,7 @@ function NewSupplierForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className="onn-btn-primary"
       >
         Adicionar fornecedor
       </button>
@@ -219,7 +225,7 @@ function NewPriceForm({ suppliers, ingredients }: { suppliers: Supplier[]; ingre
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className="onn-btn-primary"
       >
         Registrar cotação
       </button>
@@ -232,7 +238,7 @@ function PurchaseTable({ purchases }: { purchases: PurchaseRow[] }) {
     return <p className="mb-3 text-sm text-zinc-400">Nenhuma compra registrada ainda.</p>;
   }
   return (
-    <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-white">
+    <div className="onn-card mb-3 overflow-hidden">
       <table className="w-full text-sm">
         <thead className="bg-zinc-50 text-left text-zinc-500">
           <tr>
@@ -323,7 +329,7 @@ function NewPurchaseForm({ suppliers, ingredients }: { suppliers: Supplier[]; in
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className="onn-btn-primary"
       >
         Registrar compra
       </button>

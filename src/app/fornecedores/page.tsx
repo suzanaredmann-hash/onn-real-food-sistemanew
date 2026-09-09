@@ -27,8 +27,8 @@ export default async function FornecedoresPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="mb-1 text-xl font-semibold text-zinc-900">Fornecedores</h1>
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
+      <h1 className="mb-1 text-2xl font-semibold text-[#14162e]">Fornecedores</h1>
       <p className="mb-6 text-sm text-zinc-500">
         Cadastro, comparação de preço por ingrediente e histórico de compras.
       </p>

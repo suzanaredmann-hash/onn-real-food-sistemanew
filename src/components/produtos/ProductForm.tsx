@@ -173,13 +173,13 @@ export function ProductForm({
 
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-900">
+          <h2 className="text-sm font-semibold text-[#14162e]">
             Ficha técnica — ingredientes
           </h2>
           <button
             type="button"
             onClick={addIngredientLine}
-            className="flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900"
+            className="flex items-center gap-1 text-sm text-onn-primary hover:text-[#14162e]"
           >
             <Plus size={14} /> Adicionar ingrediente
           </button>
@@ -239,13 +239,13 @@ export function ProductForm({
 
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-900">
+          <h2 className="text-sm font-semibold text-[#14162e]">
             Modo de preparo
           </h2>
           <button
             type="button"
             onClick={addStep}
-            className="flex items-center gap-1 text-sm text-zinc-600 hover:text-zinc-900"
+            className="flex items-center gap-1 text-sm text-onn-primary hover:text-[#14162e]"
           >
             <Plus size={14} /> Adicionar passo
           </button>
@@ -276,11 +276,7 @@ export function ProductForm({
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
-      >
+      <button type="submit" disabled={isSubmitting} className="onn-btn-primary self-start">
         {isSubmitting ? "Salvando..." : "Salvar produto"}
       </button>
     </form>

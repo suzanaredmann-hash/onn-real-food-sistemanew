@@ -1,13 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --background: #fefef2;
+  --foreground: #14162e;
+
+  /* Paleta ONN Real Food (azul primário mais fechado que o azul de marca puro) */
+  --onn-primary: #222c7a;
+  --onn-primary-ink: #14162e;
+  --onn-base: #fefef2;
+  --onn-accent: #e1f34c;
+  --onn-support: #b4c8f9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-onn-primary: var(--onn-primary);
+  --color-onn-accent: var(--onn-accent);
+  --color-onn-support: var(--onn-support);
+  --color-onn-base: var(--onn-base);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -18,8 +29,33 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Fundo com profundidade: leve halo das cores da marca sobre o creme base,
+   em vez de um branco chapado. Fixo, então não rola nem pesa no scroll. */
+.onn-app-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--onn-base);
+  background-image:
+    radial-gradient(circle at 88% -6%, color-mix(in srgb, var(--onn-accent) 55%, transparent) 0%, transparent 42%),
+    radial-gradient(circle at -6% 12%, color-mix(in srgb, var(--onn-support) 60%, transparent) 0%, transparent 48%),
+    radial-gradient(circle at 50% 115%, color-mix(in srgb, var(--onn-primary) 12%, transparent) 0%, transparent 55%);
+}
+
 @layer components {
   .input {
-    @apply rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900;
+    @apply rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-[#14162e] outline-none transition-colors focus:border-onn-primary focus:ring-2 focus:ring-onn-primary/15;
+  }
+
+  .onn-card {
+    @apply rounded-2xl border border-zinc-100 bg-white/90 shadow-[0_1px_2px_rgba(20,22,46,0.04),0_8px_24px_rgba(20,22,46,0.05)] backdrop-blur-sm;
+  }
+
+  .onn-btn-primary {
+    @apply rounded-full bg-onn-primary px-4 py-2 text-sm font-medium text-[#FEFEF2] transition-colors hover:bg-[#1a2160] disabled:opacity-60;
+  }
+
+  .onn-pill {
+    @apply rounded-full px-3.5 py-1.5 text-sm transition-colors;
   }
 }

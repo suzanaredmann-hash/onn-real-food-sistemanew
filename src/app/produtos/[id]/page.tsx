@@ -19,11 +19,13 @@ export default async function ProductEditPage({
 
   if (isNew) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="mb-6 text-xl font-semibold text-zinc-900">
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
+        <h1 className="mb-6 text-2xl font-semibold text-[#14162e]">
           Novo produto
         </h1>
-        <ProductForm ingredientOptions={ingredientOptions} />
+        <div className="onn-card p-4 sm:p-6">
+          <ProductForm ingredientOptions={ingredientOptions} />
+        </div>
       </div>
     );
   }
@@ -44,28 +46,30 @@ export default async function ProductEditPage({
   const recipe = product.recipes[0];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="mb-6 text-xl font-semibold text-zinc-900">
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
+      <h1 className="mb-6 text-2xl font-semibold text-[#14162e]">
         Editar produto
       </h1>
-      <ProductForm
-        ingredientOptions={ingredientOptions}
-        initialData={{
-          id: product.id,
-          sku: product.sku,
-          name: product.name,
-          type: product.type,
-          price: Number(product.price),
-          packagingCost: recipe ? Number(recipe.packagingCost) : 0,
-          ingredients:
-            recipe?.ingredients.map((line) => ({
-              ingredientId: line.ingredientId,
-              quantity: Number(line.quantity),
-              unit: line.unit,
-            })) ?? [],
-          steps: recipe?.steps.map((s) => ({ instructionText: s.instructionText })) ?? [],
-        }}
-      />
+      <div className="onn-card p-4 sm:p-6">
+        <ProductForm
+          ingredientOptions={ingredientOptions}
+          initialData={{
+            id: product.id,
+            sku: product.sku,
+            name: product.name,
+            type: product.type,
+            price: Number(product.price),
+            packagingCost: recipe ? Number(recipe.packagingCost) : 0,
+            ingredients:
+              recipe?.ingredients.map((line) => ({
+                ingredientId: line.ingredientId,
+                quantity: Number(line.quantity),
+                unit: line.unit,
+              })) ?? [],
+            steps: recipe?.steps.map((s) => ({ instructionText: s.instructionText })) ?? [],
+          }}
+        />
+      </div>
     </div>
   );
 }
