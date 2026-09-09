@@ -1,20 +1,20 @@
 import { db } from "@/lib/db";
 import { ProductForm } from "@/components/fichas-tecnicas/ProductForm";
 import { notFound } from "next/navigation";
-import { FileSpreadsheet } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 function FormHero({ title }: { title: string }) {
   return (
     <div className="mb-8 flex items-center gap-4 p-6 sm:p-8">
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
-        <FileSpreadsheet size={22} />
+        <BookOpen size={22} />
       </span>
       <h1 className="font-display text-4xl sm:text-5xl">{title}</h1>
     </div>
   );
 }
 
-export default async function ProductEditPage({
+export default async function RecipeEditPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -32,9 +32,13 @@ export default async function ProductEditPage({
   if (isNew) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
-        <FormHero title="Novo produto" />
+        <FormHero title="Nova receita" />
         <div className="onn-card p-4 sm:p-6">
-          <ProductForm ingredientOptions={ingredientOptions} />
+          <ProductForm
+            ingredientOptions={ingredientOptions}
+            hideFinancials
+            redirectTo="/receitas"
+          />
         </div>
       </div>
     );
@@ -57,10 +61,12 @@ export default async function ProductEditPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
-      <FormHero title="Editar produto" />
+      <FormHero title="Editar receita" />
       <div className="onn-card p-4 sm:p-6">
         <ProductForm
           ingredientOptions={ingredientOptions}
+          hideFinancials
+          redirectTo="/receitas"
           initialData={{
             id: product.id,
             sku: product.sku,

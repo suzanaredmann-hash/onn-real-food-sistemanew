@@ -8,10 +8,11 @@ import { cn } from "@/lib/utils";
 
 // Ordem definida pela Suzana: Dashboard, Eventos, Caixa evento, Pedidos,
 // Estoque, Produção, Receitas, Fornecedores, Fichas Técnicas, Financeiro.
-// Eventos/Caixa evento/Pedidos/Estoque/Produção ainda não existem (Milestones
-// 2 e 3) — quando forem criados, entram aqui nessa posição, antes de Receitas.
+// Caixa evento/Pedidos/Estoque/Produção ainda não existem (Milestone 3) —
+// quando forem criados, entram aqui nessa posição, entre Eventos e Receitas.
 const links = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/eventos", label: "Eventos" },
   { href: "/receitas", label: "Receitas" },
   { href: "/fornecedores", label: "Fornecedores" },
 ];

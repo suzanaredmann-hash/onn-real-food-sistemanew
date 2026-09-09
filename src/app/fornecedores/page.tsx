@@ -34,7 +34,7 @@ export default async function FornecedoresPage() {
           <Truck size={22} />
         </span>
         <div>
-          <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">Fornecedores</h1>
+          <h1 className="font-display text-4xl sm:text-5xl">Fornecedores</h1>
           <p className="mt-1 text-sm text-[#14162e]/70">
             Cadastro, comparação de preço por ingrediente e histórico de compras.
           </p>

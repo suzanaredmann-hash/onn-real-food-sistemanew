@@ -17,7 +17,7 @@ type InitialData = {
   sku: string;
   name: string;
   type: ProductType;
-  price: number;
+  price: number | null;
   packagingCost: number;
   ingredients: IngredientLineInput[];
   steps: StepInput[];
@@ -28,9 +28,17 @@ const unitLabels: Record<Unit, string> = { G: "g", ML: "ml", UNIT: "un" };
 export function ProductForm({
   ingredientOptions,
   initialData,
+  /** Esconde SKU/preço/custo de embalagem — usado na tela de Receitas, que
+   * qualquer pessoa da equipe acessa. Esses dados financeiros só existem
+   * no formulário completo de Fichas Técnicas (admin). */
+  hideFinancials = false,
+  /** Pra onde voltar depois de salvar. */
+  redirectTo,
 }: {
   ingredientOptions: IngredientOption[];
   initialData?: InitialData;
+  hideFinancials?: boolean;
+  redirectTo?: string;
 }) {
   const [options, setOptions] = useState(ingredientOptions);
   const [sku, setSku] = useState(initialData?.sku ?? "");
@@ -102,13 +110,12 @@ export function ProductForm({
     try {
       await saveProduct({
         id: initialData?.id,
-        sku,
+        ...(hideFinancials ? {} : { sku, price: Number(price), packagingCost: Number(packagingCost) }),
         name,
         type,
-        price: Number(price),
-        packagingCost: Number(packagingCost),
         ingredients: ingredientLines,
         steps,
+        redirectTo,
       });
     } catch (err) {
       setIsSubmitting(false);
@@ -121,15 +128,17 @@ export function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-2 gap-4">
-        <Field label="SKU">
-          <input
-            required
-            value={sku}
-            onChange={(e) => setSku(e.target.value)}
-            className="input"
-          />
-        </Field>
-        <Field label="Tipo">
+        {!hideFinancials && (
+          <Field label="SKU">
+            <input
+              required
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              className="input"
+            />
+          </Field>
+        )}
+        <Field label="Tipo" className={hideFinancials ? "col-span-2" : undefined}>
           <select
             value={type}
             onChange={(e) => setType(e.target.value as ProductType)}
@@ -147,34 +156,38 @@ export function ProductForm({
             className="input"
           />
         </Field>
-        <Field label="Preço de venda (R$)">
-          <input
-            required
-            type="number"
-            step="0.01"
-            min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="input"
-          />
-        </Field>
-        <Field label="Custo de embalagem (R$)">
-          <input
-            required
-            type="number"
-            step="0.01"
-            min="0"
-            value={packagingCost}
-            onChange={(e) => setPackagingCost(e.target.value)}
-            className="input"
-          />
-        </Field>
+        {!hideFinancials && (
+          <>
+            <Field label="Preço de venda (R$)">
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="ainda não definido"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="input"
+              />
+            </Field>
+            <Field label="Custo de embalagem (R$)">
+              <input
+                required
+                type="number"
+                step="0.01"
+                min="0"
+                value={packagingCost}
+                onChange={(e) => setPackagingCost(e.target.value)}
+                className="input"
+              />
+            </Field>
+          </>
+        )}
       </div>
 
       <section>
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-[#14162e]">
-            Ficha técnica — ingredientes
+            {hideFinancials ? "Ingredientes" : "Ficha técnica — ingredientes"}
           </h2>
           <button
             type="button"
@@ -277,7 +290,7 @@ export function ProductForm({
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <button type="submit" disabled={isSubmitting} className="onn-btn-primary self-start">
-        {isSubmitting ? "Salvando..." : "Salvar produto"}
+        {isSubmitting ? "Salvando..." : hideFinancials ? "Salvar receita" : "Salvar produto"}
       </button>
     </form>
   );

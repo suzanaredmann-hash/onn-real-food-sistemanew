@@ -26,7 +26,7 @@ export default async function FichasTecnicasPage() {
       ? computeRecipeCost(
           {
             packagingCost: Number(recipe.packagingCost),
-            productPrice: Number(product.price),
+            productPrice: product.price === null ? null : Number(product.price),
             ingredients: recipe.ingredients.map((line) => ({
               quantity: Number(line.quantity),
               ingredientId: line.ingredientId,
@@ -47,7 +47,7 @@ export default async function FichasTecnicasPage() {
             <FileSpreadsheet size={22} />
           </span>
           <div>
-            <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">
+            <h1 className="font-display text-4xl sm:text-5xl">
               Fichas técnicas
             </h1>
             <p className="mt-1 text-sm text-[#14162e]/70">
@@ -79,7 +79,13 @@ export default async function FichasTecnicasPage() {
                   {product.name}
                   <div className="text-xs font-normal text-zinc-400">{product.sku}</div>
                 </td>
-                <td className="px-5 py-3.5 text-zinc-600">{formatCurrency(Number(product.price))}</td>
+                <td className="px-5 py-3.5 text-zinc-600">
+                  {product.price === null ? (
+                    <span className="text-amber-600">sem preço definido</span>
+                  ) : (
+                    formatCurrency(Number(product.price))
+                  )}
+                </td>
                 <td className="px-5 py-3.5 text-zinc-600">
                   {cost ? formatCurrency(cost.cmv) : "sem ficha técnica"}
                   {cost && cost.missingPrices.length > 0 && (
@@ -89,7 +95,7 @@ export default async function FichasTecnicasPage() {
                   )}
                 </td>
                 <td className="px-5 py-3.5">
-                  {cost ? (
+                  {cost && cost.margin !== null && cost.marginPercent !== null ? (
                     <span
                       className={cn(
                         "rounded-full px-2.5 py-1 text-xs font-medium",

@@ -42,14 +42,14 @@ export type RecipeCost = {
   ingredientsCost: number;
   packagingCost: number;
   cmv: number;
-  margin: number;
-  marginPercent: number;
+  margin: number | null;
+  marginPercent: number | null;
   missingPrices: string[];
 };
 
 type RecipeForCost = {
   packagingCost: number;
-  productPrice: number;
+  productPrice: number | null;
   ingredients: { quantity: number; ingredientId: string; ingredientName: string }[];
 };
 
@@ -67,8 +67,11 @@ export function computeRecipeCost(
 
   const ingredientsCost = calculateIngredientsCost(lines);
   const cmv = calculateCmv(ingredientsCost, recipe.packagingCost);
-  const margin = calculateMargin(recipe.productPrice, cmv);
-  const marginPercent = calculateMarginPercent(recipe.productPrice, cmv);
+  // Sem preço de venda definido ainda (produto criado pela tela de Receitas,
+  // aguardando a administradora definir o preço nas Fichas Técnicas).
+  const margin = recipe.productPrice === null ? null : calculateMargin(recipe.productPrice, cmv);
+  const marginPercent =
+    recipe.productPrice === null ? null : calculateMarginPercent(recipe.productPrice, cmv);
 
   return { ingredientsCost, packagingCost: recipe.packagingCost, cmv, margin, marginPercent, missingPrices };
 }
@@ -86,7 +89,7 @@ export async function getRecipeCost(recipeId: string): Promise<RecipeCost> {
   return computeRecipeCost(
     {
       packagingCost: Number(recipe.packagingCost),
-      productPrice: Number(recipe.product.price),
+      productPrice: recipe.product.price === null ? null : Number(recipe.product.price),
       ingredients: recipe.ingredients.map((line) => ({
         quantity: Number(line.quantity),
         ingredientId: line.ingredientId,

@@ -1,17 +1,19 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { TaskList } from "@/components/dashboard/TaskList";
-import { ClipboardList, Package, Truck } from "lucide-react";
+import { ClipboardList, CalendarDays } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await auth();
   const firstName = (session?.user?.name ?? "").split(" ")[0] || "";
 
-  const [tasks, pendingTasks, productCount, supplierCount] = await Promise.all([
+  const [tasks, pendingTasks, nextEvent] = await Promise.all([
     db.task.findMany({ orderBy: { orderIndex: "asc" } }),
     db.task.count({ where: { status: "TODO" } }),
-    db.product.count({ where: { isActive: true } }),
-    db.supplier.count(),
+    db.event.findFirst({
+      where: { status: { in: ["PLANNED", "OPEN"] } },
+      orderBy: { eventDate: "asc" },
+    }),
   ]);
 
   const plainTasks = tasks.map((t) => ({
@@ -22,19 +24,30 @@ export default async function DashboardPage() {
     orderIndex: t.orderIndex,
   }));
 
+  const nextEventLabel = nextEvent
+    ? nextEvent.eventDate.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "long",
+        timeZone: "UTC",
+      })
+    : "Nenhum agendado";
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
       <div className="mb-8 p-6 sm:p-8">
-        <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">
+        <h1 className="font-display text-4xl sm:text-5xl">
           {firstName ? `Bem-vinda, ${firstName}` : "Bem-vinda"}
         </h1>
         <p className="mt-1 text-sm text-[#14162e]/70">
           Um resumo rápido de como a operação está agora.
         </p>
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <StatChip icon={ClipboardList} label="Tarefas pendentes" value={pendingTasks} />
-          <StatChip icon={Package} label="Produtos cadastrados" value={productCount} />
-          <StatChip icon={Truck} label="Fornecedores" value={supplierCount} />
+          <StatChip
+            icon={CalendarDays}
+            label={nextEvent ? `Próximo evento — ${nextEvent.name}` : "Próximo evento"}
+            value={nextEventLabel}
+          />
         </div>
       </div>
 
@@ -54,7 +67,7 @@ function StatChip({
 }: {
   icon: typeof ClipboardList;
   label: string;
-  value: number;
+  value: number | string;
 }) {
   return (
     <div className="onn-stat-chip flex items-center gap-3">
