@@ -1,0 +1,315 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Usuários / Dashboard ----------
+
+enum Role {
+  ADMIN
+  FUNCIONARIO
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(FUNCIONARIO)
+  createdAt    DateTime @default(now())
+
+  tasksAssigned Task[]
+  eventsCreated Event[]
+
+  @@map("users")
+}
+
+enum TaskStatus {
+  TODO
+  DONE
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  orderIndex  Int        @default(0)
+  status      TaskStatus @default(TODO)
+  assignedTo  User?      @relation(fields: [assignedToId], references: [id])
+  assignedToId String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("tasks")
+}
+
+// ---------- Produtos / Fichas técnicas / Receitas ----------
+
+enum ProductType {
+  SMOOTHIE
+  SANDUICHE
+}
+
+model Product {
+  id       String      @id @default(cuid())
+  sku      String      @unique
+  name     String
+  type     ProductType
+  price    Decimal     @db.Decimal(10, 2)
+  isActive Boolean     @default(true)
+  createdAt DateTime   @default(now())
+
+  recipes       Recipe[]
+  productionBatches ProductionBatch[]
+  orderItems    OrderItem[]
+
+  @@map("products")
+}
+
+model Base {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  isActive Boolean @default(true)
+
+  orderItemBases OrderItemBase[]
+
+  @@map("bases")
+}
+
+enum Unit {
+  G
+  ML
+  UNIT
+}
+
+model Ingredient {
+  id    String @id @default(cuid())
+  name  String @unique
+  unit  Unit
+  notes String?
+
+  recipeIngredients RecipeIngredient[]
+  supplierPrices    SupplierPrice[]
+  purchases         Purchase[]
+
+  @@map("ingredients")
+}
+
+model Recipe {
+  id             String   @id @default(cuid())
+  product        Product  @relation(fields: [productId], references: [id])
+  productId      String
+  packagingCost  Decimal  @db.Decimal(10, 2) @default(0)
+  version        Int      @default(1)
+  createdAt      DateTime @default(now())
+
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId     String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+  quantity     Decimal    @db.Decimal(10, 3)
+  unit         Unit
+
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id              String @id @default(cuid())
+  recipe          Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId        String
+  stepNumber      Int
+  instructionText String
+
+  @@map("recipe_steps")
+}
+
+// ---------- Fornecedores ----------
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String
+  contactName String?
+  phone       String?
+  email       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  prices    SupplierPrice[]
+  purchases Purchase[]
+
+  @@map("suppliers")
+}
+
+model SupplierPrice {
+  id           String     @id @default(cuid())
+  supplier     Supplier   @relation(fields: [supplierId], references: [id])
+  supplierId   String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+  pricePerUnit Decimal    @db.Decimal(10, 4)
+  unit         Unit
+  validFrom    DateTime   @default(now())
+  notes        String?
+
+  @@map("supplier_prices")
+}
+
+model Purchase {
+  id           String     @id @default(cuid())
+  supplier     Supplier   @relation(fields: [supplierId], references: [id])
+  supplierId   String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+  quantity     Decimal    @db.Decimal(10, 3)
+  unit         Unit
+  totalCost    Decimal    @db.Decimal(10, 2)
+  purchasedAt  DateTime   @default(now())
+  notes        String?
+
+  @@map("purchases")
+}
+
+// ---------- Eventos / Produção ----------
+
+enum EventStatus {
+  PLANNED
+  OPEN
+  CLOSED
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  name        String
+  venue       String?
+  eventDate   DateTime
+  startTime   DateTime?
+  endTime     DateTime?
+  status      EventStatus @default(PLANNED)
+  createdBy   User?       @relation(fields: [createdById], references: [id])
+  createdById String?
+  closedAt    DateTime?
+  createdAt   DateTime    @default(now())
+
+  productionBatches ProductionBatch[]
+  orders            Order[]
+  dreSnapshot       DreSnapshot?
+
+  @@map("events")
+}
+
+model ProductionBatch {
+  id               String   @id @default(cuid())
+  event            Event    @relation(fields: [eventId], references: [id])
+  eventId          String
+  loteCode         String
+  product          Product  @relation(fields: [productId], references: [id])
+  productId        String
+  quantityProduced Int
+  producedAt       DateTime @default(now())
+  notes            String?
+
+  @@map("production_batches")
+}
+
+// ---------- Pedidos / PDV ----------
+
+enum OrderSource {
+  PDV
+  ONLINE
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  event       Event       @relation(fields: [eventId], references: [id])
+  eventId     String
+  source      OrderSource @default(PDV)
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2) @default(0)
+  createdAt   DateTime    @default(now())
+  closedAt    DateTime?
+
+  items    OrderItem[]
+  payments Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    String
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  isSample   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  bases OrderItemBase[]
+
+  @@map("order_items")
+}
+
+model OrderItemBase {
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  orderItemId String
+  base        Base      @relation(fields: [baseId], references: [id])
+  baseId      String
+
+  @@id([orderItemId, baseId])
+  @@map("order_item_bases")
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  PIX
+  OTHER
+}
+
+model Payment {
+  id       String        @id @default(cuid())
+  order    Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId  String
+  method   PaymentMethod
+  amount   Decimal       @db.Decimal(10, 2)
+  paidAt   DateTime      @default(now())
+
+  @@map("payments")
+}
+
+// ---------- Financeiro / DRE ----------
+
+model DreSnapshot {
+  id                    String   @id @default(cuid())
+  event                 Event    @relation(fields: [eventId], references: [id])
+  eventId               String   @unique
+  generatedAt           DateTime @default(now())
+  revenueTotal          Decimal  @db.Decimal(10, 2)
+  unitsSold             Int
+  cmvTotal              Decimal  @db.Decimal(10, 2)
+  marginTotal           Decimal  @db.Decimal(10, 2)
+  avgTicket             Decimal  @db.Decimal(10, 2)
+  samplesGiven          Int
+  paymentsBreakdownJson Json
+
+  @@map("dre_snapshots")
+}
