@@ -21,12 +21,20 @@
   --color-onn-base: var(--onn-base);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-instrument-serif);
 }
 
 body {
-  /* Fundo calmo e uniforme — a cor forte fica reservada pro painel .onn-hero,
-     não espalhada em manchas fracas pela página inteira. */
-  background: color-mix(in srgb, var(--onn-support) 7%, var(--onn-base));
+  /* O degradê da marca cobre a página inteira (fixo, não rola com o
+     conteúdo) — os cards brancos sólidos por cima é que criam o contraste,
+     igual à referência: fundo colorido, cartões sólidos flutuando nele. */
+  background-color: var(--onn-base);
+  background-image:
+    radial-gradient(60% 55% at 100% 0%, var(--onn-accent) 0%, transparent 70%),
+    radial-gradient(45% 50% at 0% 8%, var(--onn-support) 0%, transparent 72%),
+    radial-gradient(55% 45% at 85% 100%, color-mix(in srgb, var(--onn-support) 70%, transparent) 0%, transparent 75%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -50,27 +58,7 @@ body {
     @apply rounded-full px-3.5 py-1.5 text-sm transition-colors;
   }
 
-  /* Painel de destaque (hero) — a cor forte da marca mora aqui, não no fundo
-     da página inteira. Usar com moderação: um por página, no topo. */
-  .onn-hero {
-    @apply rounded-[28px] text-[#14162e] shadow-[0_4px_10px_rgba(20,22,46,0.08),0_20px_44px_rgba(34,44,122,0.14)];
-    background-image:
-      radial-gradient(120% 140% at 100% 0%, var(--onn-accent) 0%, transparent 55%),
-      radial-gradient(90% 120% at 0% 100%, var(--onn-support) 0%, transparent 60%),
-      linear-gradient(135deg, var(--onn-base) 0%, var(--onn-base) 100%);
-  }
-
   .onn-stat-chip {
     @apply rounded-2xl bg-white/70 px-4 py-3 shadow-[0_1px_2px_rgba(20,22,46,0.05),0_6px_16px_rgba(20,22,46,0.06)] backdrop-blur-sm;
-  }
-
-  /* Mesmo gradiente do .onn-hero, sem cantos/sombra — pra telas sem nav
-     (login), onde a cor cobre a janela inteira em vez de um painel. */
-  .onn-hero-fullbleed {
-    @apply text-[#14162e];
-    background-image:
-      radial-gradient(120% 70% at 100% 0%, var(--onn-accent) 0%, transparent 55%),
-      radial-gradient(90% 70% at 0% 100%, var(--onn-support) 0%, transparent 60%),
-      linear-gradient(135deg, var(--onn-base) 0%, var(--onn-base) 100%);
   }
 }

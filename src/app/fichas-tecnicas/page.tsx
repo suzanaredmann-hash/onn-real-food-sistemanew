@@ -41,13 +41,13 @@ export default async function FichasTecnicasPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
-      <div className="onn-hero mb-8 flex items-center justify-between gap-4 p-6 sm:p-8">
+      <div className="mb-8 flex items-center justify-between gap-4 p-6 sm:p-8">
         <div className="flex items-center gap-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
             <FileSpreadsheet size={22} />
           </span>
           <div>
-            <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+            <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">
               Fichas técnicas
             </h1>
             <p className="mt-1 text-sm text-[#14162e]/70">

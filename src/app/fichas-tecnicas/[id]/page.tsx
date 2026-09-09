@@ -5,11 +5,11 @@ import { FileSpreadsheet } from "lucide-react";
 
 function FormHero({ title }: { title: string }) {
   return (
-    <div className="onn-hero mb-8 flex items-center gap-4 p-6 sm:p-8">
+    <div className="mb-8 flex items-center gap-4 p-6 sm:p-8">
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
         <FileSpreadsheet size={22} />
       </span>
-      <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">{title}</h1>
+      <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">{title}</h1>
     </div>
   );
 }

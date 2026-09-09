@@ -24,8 +24,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-      <div className="onn-hero mb-8 p-6 sm:p-8">
-        <h1 className="text-3xl font-semibold tracking-[-0.02em]">
+      <div className="mb-8 p-6 sm:p-8">
+        <h1 className="font-display text-4xl tracking-[-0.02em] sm:text-5xl">
           {firstName ? `Bem-vinda, ${firstName}` : "Bem-vinda"}
         </h1>
         <p className="mt-1 text-sm text-[#14162e]/70">
@@ -62,7 +62,7 @@ function StatChip({
         <Icon size={18} />
       </span>
       <div>
-        <p className="text-xl font-semibold leading-none text-[#14162e]">{value}</p>
+        <p className="font-display text-2xl leading-none text-[#14162e]">{value}</p>
         <p className="text-xs text-[#14162e]/60">{label}</p>
       </div>
     </div>
