@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { ProductForm } from "@/components/produtos/ProductForm";
+import { ProductForm } from "@/components/fichas-tecnicas/ProductForm";
 import { notFound } from "next/navigation";
 
 export default async function ProductEditPage({

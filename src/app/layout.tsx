@@ -30,8 +30,9 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <div className="onn-app-background" aria-hidden />
-        {session?.user && <NavBar userName={session.user.name ?? ""} />}
+        {session?.user && (
+          <NavBar userName={session.user.name ?? ""} role={session.user.role} />
+        )}
         <main className="flex-1">{children}</main>
       </body>
     </html>

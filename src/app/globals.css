@@ -24,22 +24,11 @@
 }
 
 body {
-  background: var(--background);
+  /* Fundo calmo e uniforme — a cor forte fica reservada pro painel .onn-hero,
+     não espalhada em manchas fracas pela página inteira. */
+  background: color-mix(in srgb, var(--onn-support) 7%, var(--onn-base));
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Fundo com profundidade: leve halo das cores da marca sobre o creme base,
-   em vez de um branco chapado. Fixo, então não rola nem pesa no scroll. */
-.onn-app-background {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-color: var(--onn-base);
-  background-image:
-    radial-gradient(circle at 88% -6%, color-mix(in srgb, var(--onn-accent) 55%, transparent) 0%, transparent 42%),
-    radial-gradient(circle at -6% 12%, color-mix(in srgb, var(--onn-support) 60%, transparent) 0%, transparent 48%),
-    radial-gradient(circle at 50% 115%, color-mix(in srgb, var(--onn-primary) 12%, transparent) 0%, transparent 55%);
 }
 
 @layer components {
@@ -47,8 +36,10 @@ body {
     @apply rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-[#14162e] outline-none transition-colors focus:border-onn-primary focus:ring-2 focus:ring-onn-primary/15;
   }
 
+  /* Elevação declarada uma única vez (sombra com offset + blur reais) — nunca
+     borda e sombra juntas na mesma superfície ("ghost card"). */
   .onn-card {
-    @apply rounded-2xl border border-zinc-100 bg-white/90 shadow-[0_1px_2px_rgba(20,22,46,0.04),0_8px_24px_rgba(20,22,46,0.05)] backdrop-blur-sm;
+    @apply rounded-2xl bg-white shadow-[0_2px_4px_rgba(20,22,46,0.06),0_14px_32px_rgba(20,22,46,0.09)];
   }
 
   .onn-btn-primary {
@@ -57,5 +48,19 @@ body {
 
   .onn-pill {
     @apply rounded-full px-3.5 py-1.5 text-sm transition-colors;
+  }
+
+  /* Painel de destaque (hero) — a cor forte da marca mora aqui, não no fundo
+     da página inteira. Usar com moderação: um por página, no topo. */
+  .onn-hero {
+    @apply rounded-[28px] text-[#14162e] shadow-[0_4px_10px_rgba(20,22,46,0.08),0_20px_44px_rgba(34,44,122,0.14)];
+    background-image:
+      radial-gradient(120% 140% at 100% 0%, var(--onn-accent) 0%, transparent 55%),
+      radial-gradient(90% 120% at 0% 100%, var(--onn-support) 0%, transparent 60%),
+      linear-gradient(135deg, var(--onn-base) 0%, var(--onn-base) 100%);
+  }
+
+  .onn-stat-chip {
+    @apply rounded-2xl bg-white/70 px-4 py-3 shadow-[0_1px_2px_rgba(20,22,46,0.05),0_6px_16px_rgba(20,22,46,0.06)] backdrop-blur-sm;
   }
 }

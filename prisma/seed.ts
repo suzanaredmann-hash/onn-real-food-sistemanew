@@ -16,6 +16,19 @@ async function main() {
     },
   });
 
+  // Conta de exemplo pra testar a visão de funcionário (sem Fichas Técnicas
+  // nem, futuramente, Financeiro). Login: funcionario@onnrealfood.com / onn2024
+  await db.user.upsert({
+    where: { email: "funcionario@onnrealfood.com" },
+    update: {},
+    create: {
+      name: "Equipe",
+      email: "funcionario@onnrealfood.com",
+      passwordHash,
+      role: "FUNCIONARIO",
+    },
+  });
+
   const ingredients = await Promise.all(
     [
       { name: "Morango congelado", unit: Unit.G },

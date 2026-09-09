@@ -83,19 +83,19 @@ export async function saveProduct(input: SaveProductInput) {
     });
   }
 
-  revalidatePath("/produtos");
-  redirect("/produtos");
+  revalidatePath("/fichas-tecnicas");
+  redirect("/fichas-tecnicas");
 }
 
 export async function deleteProduct(id: string) {
   await db.product.update({ where: { id }, data: { isActive: false } });
-  revalidatePath("/produtos");
+  revalidatePath("/fichas-tecnicas");
 }
 
 export async function createIngredient(name: string, unit: Unit) {
   const trimmed = name.trim();
   if (!trimmed) throw new Error("Nome do ingrediente é obrigatório");
   const ingredient = await db.ingredient.create({ data: { name: trimmed, unit } });
-  revalidatePath("/produtos");
+  revalidatePath("/fichas-tecnicas");
   return ingredient;
 }

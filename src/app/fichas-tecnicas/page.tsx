@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { computeRecipeCost, getCurrentIngredientPriceMap } from "@/lib/pricing";
 import { formatCurrency, cn } from "@/lib/utils";
 
-export default async function ProdutosPage() {
+export default async function FichasTecnicasPage() {
   const [products, priceMap] = await Promise.all([
     db.product.findMany({
       where: { isActive: true },
@@ -43,13 +43,14 @@ export default async function ProdutosPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-[#14162e]">
-            Produtos &amp; fichas técnicas
+            Fichas técnicas
           </h1>
           <p className="text-sm text-zinc-500">
             CMV e margem calculados a partir do preço atual dos ingredientes.
+            Só visível pra administradora.
           </p>
         </div>
-        <Link href="/produtos/novo" className="onn-btn-primary">
+        <Link href="/fichas-tecnicas/novo" className="onn-btn-primary">
           Novo produto
         </Link>
       </div>
@@ -99,7 +100,7 @@ export default async function ProdutosPage() {
                 </td>
                 <td className="px-5 py-3.5 text-right">
                   <Link
-                    href={`/produtos/${product.id}`}
+                    href={`/fichas-tecnicas/${product.id}`}
                     className="text-zinc-400 hover:text-onn-primary"
                   >
                     editar

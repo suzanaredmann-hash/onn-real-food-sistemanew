@@ -8,7 +8,7 @@ import {
   createIngredient,
   type IngredientLineInput,
   type StepInput,
-} from "@/app/produtos/actions";
+} from "@/app/fichas-tecnicas/actions";
 
 type IngredientOption = { id: string; name: string; unit: Unit };
 

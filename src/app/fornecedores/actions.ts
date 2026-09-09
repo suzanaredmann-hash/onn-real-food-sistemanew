@@ -22,7 +22,7 @@ export async function addSupplierPrice(data: {
 }) {
   await db.supplierPrice.create({ data });
   revalidatePath("/fornecedores");
-  revalidatePath("/produtos");
+  revalidatePath("/fichas-tecnicas");
 }
 
 export async function addPurchase(data: {
