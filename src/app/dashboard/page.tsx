@@ -18,6 +18,7 @@ export default async function DashboardPage() {
     id: t.id,
     title: t.title,
     status: t.status,
+    priority: t.priority,
     orderIndex: t.orderIndex,
   }));
 
@@ -39,11 +40,9 @@ export default async function DashboardPage() {
 
       <h2 className="mb-1 text-lg font-semibold text-[#14162e]">Tarefas</h2>
       <p className="mb-4 text-sm text-zinc-500">
-        Por prioridade. Arraste pra reordenar.
+        Por prioridade. Arraste pra reordenar dentro de cada tabela.
       </p>
-      <div className="onn-card p-4 sm:p-6">
-        <TaskList initialTasks={plainTasks} />
-      </div>
+      <TaskList initialTasks={plainTasks} />
     </div>
   );
 }

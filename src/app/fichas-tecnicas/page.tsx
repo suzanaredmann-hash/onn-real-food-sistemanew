@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { computeRecipeCost, getCurrentIngredientPriceMap } from "@/lib/pricing";
 import { formatCurrency, cn } from "@/lib/utils";
+import { FileSpreadsheet } from "lucide-react";
 
 export default async function FichasTecnicasPage() {
   const [products, priceMap] = await Promise.all([
@@ -40,17 +41,22 @@ export default async function FichasTecnicasPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-[#14162e]">
-            Fichas técnicas
-          </h1>
-          <p className="text-sm text-zinc-500">
-            CMV e margem calculados a partir do preço atual dos ingredientes.
-            Só visível pra administradora.
-          </p>
+      <div className="onn-hero mb-8 flex items-center justify-between gap-4 p-6 sm:p-8">
+        <div className="flex items-center gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
+            <FileSpreadsheet size={22} />
+          </span>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+              Fichas técnicas
+            </h1>
+            <p className="mt-1 text-sm text-[#14162e]/70">
+              CMV e margem a partir do preço atual dos ingredientes. Só
+              visível pra administradora.
+            </p>
+          </div>
         </div>
-        <Link href="/fichas-tecnicas/novo" className="onn-btn-primary">
+        <Link href="/fichas-tecnicas/novo" className="onn-btn-primary shrink-0">
           Novo produto
         </Link>
       </div>

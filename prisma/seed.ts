@@ -198,9 +198,10 @@ async function main() {
   if (!hasTasks) {
     await db.task.createMany({
       data: [
-        { title: "Confirmar fornecedor de morango pra próximo evento", orderIndex: 0 },
-        { title: "Fechar cardápio do evento de sábado", orderIndex: 1 },
-        { title: "Atualizar ficha técnica do sanduíche de frango", orderIndex: 2 },
+        { title: "Confirmar fornecedor de morango pra próximo evento", orderIndex: 0, priority: "ALTA" },
+        { title: "Fechar cardápio do evento de sábado", orderIndex: 1, priority: "ALTA" },
+        { title: "Atualizar ficha técnica do sanduíche de frango", orderIndex: 2, priority: "MEDIA" },
+        { title: "Testar checkout no evento de sexta", orderIndex: 3, priority: "BAIXA" },
       ],
     });
   }

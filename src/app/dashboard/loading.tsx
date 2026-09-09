@@ -14,9 +14,15 @@ export default function Loading() {
       </div>
       <Skeleton className="mb-2 h-5 w-24" />
       <Skeleton className="mb-4 h-4 w-64" />
-      <div className="onn-card flex flex-col gap-2 p-4 sm:p-6">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-11 w-full" />
+      <div className="flex flex-col gap-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i}>
+            <Skeleton className="mb-2 h-4 w-32" />
+            <div className="onn-card flex flex-col gap-2 p-3">
+              <Skeleton className="h-11 w-full" />
+              <Skeleton className="h-11 w-full" />
+            </div>
+          </div>
         ))}
       </div>
     </div>

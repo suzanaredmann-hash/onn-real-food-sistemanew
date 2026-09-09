@@ -33,16 +33,23 @@ enum TaskStatus {
   DONE
 }
 
+enum TaskPriority {
+  ALTA
+  MEDIA
+  BAIXA
+}
+
 model Task {
-  id          String     @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   description String?
-  orderIndex  Int        @default(0)
-  status      TaskStatus @default(TODO)
-  assignedTo  User?      @relation(fields: [assignedToId], references: [id])
+  orderIndex  Int          @default(0)
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIA)
+  assignedTo  User?        @relation(fields: [assignedToId], references: [id])
   assignedToId String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@map("tasks")
 }

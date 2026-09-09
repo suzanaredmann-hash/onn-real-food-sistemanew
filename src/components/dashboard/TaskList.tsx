@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
+import type { TaskPriority } from "@prisma/client";
 import {
   DndContext,
   closestCenter,
@@ -21,6 +22,7 @@ import {
   createTask,
   toggleTaskStatus,
   updateTaskTitle,
+  updateTaskPriority,
   deleteTask,
   reorderTasks,
 } from "@/app/dashboard/actions";
@@ -30,32 +32,40 @@ type Task = {
   id: string;
   title: string;
   status: "TODO" | "DONE";
+  priority: TaskPriority;
   orderIndex: number;
+};
+
+const PRIORITY_ORDER: TaskPriority[] = ["ALTA", "MEDIA", "BAIXA"];
+
+const PRIORITY_META: Record<
+  TaskPriority,
+  { label: string; dot: string; badge: string; ring: string }
+> = {
+  ALTA: {
+    label: "Alta prioridade",
+    dot: "bg-red-500",
+    badge: "bg-red-50 text-red-700",
+    ring: "focus:ring-red-500/30",
+  },
+  MEDIA: {
+    label: "Média prioridade",
+    dot: "bg-amber-500",
+    badge: "bg-amber-50 text-amber-700",
+    ring: "focus:ring-amber-500/30",
+  },
+  BAIXA: {
+    label: "Baixa prioridade",
+    dot: "bg-onn-support",
+    badge: "bg-onn-support/30 text-[#1c2b57]",
+    ring: "focus:ring-onn-support/40",
+  },
 };
 
 export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
   const [tasks, setTasks] = useState(initialTasks);
   const [newTitle, setNewTitle] = useState("");
-  const [, startTransition] = useTransition();
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  );
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setTasks((current) => {
-      const oldIndex = current.findIndex((t) => t.id === active.id);
-      const newIndex = current.findIndex((t) => t.id === over.id);
-      const reordered = arrayMove(current, oldIndex, newIndex);
-      startTransition(() => {
-        reorderTasks(reordered.map((t) => t.id));
-      });
-      return reordered;
-    });
-  }
+  const [newPriority, setNewPriority] = useState<TaskPriority>("MEDIA");
 
   async function handleAddTask(e: FormEvent) {
     e.preventDefault();
@@ -65,13 +75,11 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
     const tempId = `temp-${Date.now()}`;
     setTasks((current) => [
       ...current,
-      { id: tempId, title, status: "TODO", orderIndex: current.length },
+      { id: tempId, title, status: "TODO", priority: newPriority, orderIndex: current.length },
     ]);
 
     try {
-      const created = await createTask(title);
-      // troca o id temporário pelo id real do banco — sem isso, editar/excluir/marcar
-      // essa tarefa antes de um reload falha porque o id temporário não existe no banco
+      const created = await createTask(title, newPriority);
       setTasks((current) => current.map((t) => (t.id === tempId ? created : t)));
     } catch {
       setTasks((current) => current.filter((t) => t.id !== tempId));
@@ -98,47 +106,132 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
     await updateTaskTitle(id, title);
   }
 
+  async function handlePriorityChange(id: string, priority: TaskPriority) {
+    setTasks((current) => current.map((t) => (t.id === id ? { ...t, priority } : t)));
+    await updateTaskPriority(id, priority);
+  }
+
+  function handleReorderInGroup(orderedGroupIds: string[], priority: TaskPriority) {
+    setTasks((current) => {
+      const others = current.filter((t) => t.priority !== priority);
+      const reorderedGroup = orderedGroupIds.map(
+        (id) => current.find((t) => t.id === id)!
+      );
+      return [...others, ...reorderedGroup];
+    });
+    reorderTasks(orderedGroupIds);
+  }
+
   return (
-    <div>
-      <form onSubmit={handleAddTask} className="mb-4 flex gap-2">
+    <div className="flex flex-col gap-6">
+      <form onSubmit={handleAddTask} className="flex flex-wrap gap-2">
         <input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           placeholder="Nova tarefa..."
           className="input flex-1"
         />
+        <select
+          value={newPriority}
+          onChange={(e) => setNewPriority(e.target.value as TaskPriority)}
+          className="input w-auto"
+        >
+          {PRIORITY_ORDER.map((p) => (
+            <option key={p} value={p}>
+              {PRIORITY_META[p].label}
+            </option>
+          ))}
+        </select>
         <button type="submit" className="onn-btn-primary">
           Adicionar
         </button>
       </form>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={tasks.map((t) => t.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <ul className="flex flex-col gap-2">
-            {tasks.map((task) => (
-              <SortableTaskRow
-                key={task.id}
-                task={task}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-                onRename={handleRename}
-              />
-            ))}
-          </ul>
-        </SortableContext>
-      </DndContext>
+      <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-500">
+        <span className="font-medium text-zinc-400">Legenda:</span>
+        {PRIORITY_ORDER.map((p) => (
+          <span key={p} className="flex items-center gap-1.5">
+            <span className={cn("h-2 w-2 rounded-full", PRIORITY_META[p].dot)} />
+            {PRIORITY_META[p].label}
+          </span>
+        ))}
+      </div>
 
-      {tasks.length === 0 && (
-        <p className="mt-4 text-sm text-zinc-400">Nenhuma tarefa ainda.</p>
-      )}
+      {PRIORITY_ORDER.map((priority) => (
+        <PriorityGroup
+          key={priority}
+          priority={priority}
+          tasks={tasks.filter((t) => t.priority === priority).sort((a, b) => a.orderIndex - b.orderIndex)}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+          onRename={handleRename}
+          onPriorityChange={handlePriorityChange}
+          onReorder={(ids) => handleReorderInGroup(ids, priority)}
+        />
+      ))}
     </div>
+  );
+}
+
+function PriorityGroup({
+  priority,
+  tasks,
+  onToggle,
+  onDelete,
+  onRename,
+  onPriorityChange,
+  onReorder,
+}: {
+  priority: TaskPriority;
+  tasks: Task[];
+  onToggle: (id: string, status: "TODO" | "DONE") => void;
+  onDelete: (id: string) => void;
+  onRename: (id: string, title: string) => void;
+  onPriorityChange: (id: string, priority: TaskPriority) => void;
+  onReorder: (orderedIds: string[]) => void;
+}) {
+  const meta = PRIORITY_META[priority];
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = tasks.findIndex((t) => t.id === active.id);
+    const newIndex = tasks.findIndex((t) => t.id === over.id);
+    onReorder(arrayMove(tasks, oldIndex, newIndex).map((t) => t.id));
+  }
+
+  return (
+    <section>
+      <div className="mb-2 flex items-center gap-2">
+        <span className={cn("h-2.5 w-2.5 rounded-full", meta.dot)} />
+        <h3 className="text-sm font-semibold text-[#14162e]">{meta.label}</h3>
+        <span className="text-xs text-zinc-400">({tasks.length})</span>
+      </div>
+      <div className="onn-card p-3">
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+            <ul className="flex flex-col gap-2">
+              {tasks.map((task) => (
+                <SortableTaskRow
+                  key={task.id}
+                  task={task}
+                  onToggle={onToggle}
+                  onDelete={onDelete}
+                  onRename={onRename}
+                  onPriorityChange={onPriorityChange}
+                />
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
+        {tasks.length === 0 && (
+          <p className="px-1 py-2 text-sm text-zinc-400">Nenhuma tarefa aqui.</p>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -147,11 +240,13 @@ function SortableTaskRow({
   onToggle,
   onDelete,
   onRename,
+  onPriorityChange,
 }: {
   task: Task;
   onToggle: (id: string, status: "TODO" | "DONE") => void;
   onDelete: (id: string) => void;
   onRename: (id: string, title: string) => void;
+  onPriorityChange: (id: string, priority: TaskPriority) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id });
@@ -213,6 +308,20 @@ function SortableTaskRow({
           {task.title}
         </span>
       )}
+      <select
+        value={task.priority}
+        onChange={(e) => onPriorityChange(task.id, e.target.value as TaskPriority)}
+        className={cn(
+          "rounded-full border-0 px-2.5 py-1 text-xs font-medium outline-none",
+          PRIORITY_META[task.priority].badge
+        )}
+      >
+        {PRIORITY_ORDER.map((p) => (
+          <option key={p} value={p}>
+            {PRIORITY_META[p].label}
+          </option>
+        ))}
+      </select>
       <button
         onClick={() => onDelete(task.id)}
         className="text-zinc-300 hover:text-red-600"

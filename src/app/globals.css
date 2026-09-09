@@ -63,4 +63,14 @@ body {
   .onn-stat-chip {
     @apply rounded-2xl bg-white/70 px-4 py-3 shadow-[0_1px_2px_rgba(20,22,46,0.05),0_6px_16px_rgba(20,22,46,0.06)] backdrop-blur-sm;
   }
+
+  /* Mesmo gradiente do .onn-hero, sem cantos/sombra — pra telas sem nav
+     (login), onde a cor cobre a janela inteira em vez de um painel. */
+  .onn-hero-fullbleed {
+    @apply text-[#14162e];
+    background-image:
+      radial-gradient(120% 70% at 100% 0%, var(--onn-accent) 0%, transparent 55%),
+      radial-gradient(90% 70% at 0% 100%, var(--onn-support) 0%, transparent 60%),
+      linear-gradient(135deg, var(--onn-base) 0%, var(--onn-base) 100%);
+  }
 }

@@ -1,6 +1,18 @@
 import { db } from "@/lib/db";
 import { ProductForm } from "@/components/fichas-tecnicas/ProductForm";
 import { notFound } from "next/navigation";
+import { FileSpreadsheet } from "lucide-react";
+
+function FormHero({ title }: { title: string }) {
+  return (
+    <div className="onn-hero mb-8 flex items-center gap-4 p-6 sm:p-8">
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
+        <FileSpreadsheet size={22} />
+      </span>
+      <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">{title}</h1>
+    </div>
+  );
+}
 
 export default async function ProductEditPage({
   params,
@@ -20,9 +32,7 @@ export default async function ProductEditPage({
   if (isNew) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
-        <h1 className="mb-6 text-2xl font-semibold text-[#14162e]">
-          Novo produto
-        </h1>
+        <FormHero title="Novo produto" />
         <div className="onn-card p-4 sm:p-6">
           <ProductForm ingredientOptions={ingredientOptions} />
         </div>
@@ -47,9 +57,7 @@ export default async function ProductEditPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
-      <h1 className="mb-6 text-2xl font-semibold text-[#14162e]">
-        Editar produto
-      </h1>
+      <FormHero title="Editar produto" />
       <div className="onn-card p-4 sm:p-6">
         <ProductForm
           ingredientOptions={ingredientOptions}

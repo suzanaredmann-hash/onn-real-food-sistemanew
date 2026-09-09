@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { FornecedoresPanel } from "@/components/fornecedores/FornecedoresPanel";
+import { Truck } from "lucide-react";
 
 export default async function FornecedoresPage() {
   const [suppliers, ingredients, allPrices, purchases] = await Promise.all([
@@ -28,10 +29,17 @@ export default async function FornecedoresPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-10">
-      <h1 className="mb-1 text-2xl font-semibold text-[#14162e]">Fornecedores</h1>
-      <p className="mb-6 text-sm text-zinc-500">
-        Cadastro, comparação de preço por ingrediente e histórico de compras.
-      </p>
+      <div className="onn-hero mb-8 flex items-center gap-4 p-6 sm:p-8">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
+          <Truck size={22} />
+        </span>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">Fornecedores</h1>
+          <p className="mt-1 text-sm text-[#14162e]/70">
+            Cadastro, comparação de preço por ingrediente e histórico de compras.
+          </p>
+        </div>
+      </div>
       <FornecedoresPanel
         suppliers={suppliers.map((s) => ({ id: s.id, name: s.name, contactName: s.contactName, phone: s.phone, email: s.email }))}
         ingredients={ingredients.map((i) => ({ id: i.id, name: i.name, unit: i.unit }))}

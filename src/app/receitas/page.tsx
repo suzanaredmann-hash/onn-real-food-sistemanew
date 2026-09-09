@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { BookOpen } from "lucide-react";
 
 const unitLabels: Record<string, string> = { G: "g", ML: "ml", UNIT: "un" };
 
@@ -20,10 +21,18 @@ export default async function ReceitasPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-      <h1 className="mb-1 text-2xl font-semibold text-[#14162e]">Receitas</h1>
-      <p className="mb-6 text-sm text-zinc-500">
-        Gramagem, modo de preparo e embalagem de cada produto.
-      </p>
+      <div className="onn-hero mb-8 flex items-center gap-4 p-6 sm:p-8">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-onn-primary">
+          <BookOpen size={22} />
+        </span>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">Receitas</h1>
+          <p className="mt-1 text-sm text-[#14162e]/70">
+            Gramagem, modo de preparo e embalagem de cada produto — {products.length}{" "}
+            {products.length === 1 ? "produto" : "produtos"}.
+          </p>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-4">
         {products.map((product) => {

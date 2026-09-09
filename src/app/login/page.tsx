@@ -2,7 +2,7 @@ import { LoginForm } from "@/components/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="onn-hero-fullbleed flex min-h-screen items-center justify-center px-4">
       <div className="onn-card w-full max-w-sm p-8">
         <span className="mb-4 inline-block rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-[#14162e]">
           ONN
